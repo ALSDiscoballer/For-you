@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Miss Kavya Prema </title>
+
+<style>
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  color: #333;
+}
+
+/* Floating hearts */
+.heart {
+  position: fixed;
+  bottom: -20px;
+  font-size: 20px;
+  animation: floatUp 6s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 0.7; }
+  100% { transform: translateY(-110vh); opacity: 0; }
+}
+
+h1 {
+  margin-top: 30px;
+  font-size: 28px;
+}
+
+p {
+  margin-bottom: 20px;
+}
+
+.controls button {
+  padding: 10px 15px;
+  margin: 8px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background: white;
+}
+
+.playlist {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 20px;
+  text-align: left;
+  padding: 10px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 15px;
+}
+
+.song {
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.song:hover {
+  background: rgba(255,255,255,0.8);
+}
+
+.active {
+  background: #ffccd5;
+}
+</style>
+</head>
+
+<body>
+
+<h1>For Miss.Kavya Prema 💖</h1>
+<p>Your ma bestie Kavi :D. Happy bday Dumbo.</p>
+
+<audio id="player" controls style="width:90%;"></audio>
+
+<div class="controls">
+  <button onclick="prevSong()">⏮</button>
+  <button onclick="playPause()">▶ / ⏸</button>
+  <button onclick="nextSong()">⏭</button>
+  <button onclick="shuffleSong()">🔀</button>
+</div>
+
+<div class="playlist" id="playlist"></div>
+
+<script>
+/* ============================= */
+/* ADD YOUR 75 SONGS HERE */
+/* ============================= */
+
+const songs = [
+  { file: "songs/reminder.mp3", name: "Reminder" },
+  { file: "songs/dheema.mp3", name: "Dheema" },
+  { file: "songs/mutta-kalakki.mp3", name: "Mutta Kalakki" },
+  { file: "songs/oorum-blood.mp3", name: "Oorum blood" },
+  { file: "songs/narivetta-minnalvala.mp3", name: "Narivetta Minnalvala" },
+  { file: "songs/kannukulla.mp3", name: "Kannukulla" },
+  { file: "songs/thangamey.mp3", name: "Thangamey" },
+  { file: "songs/ambikapathy.mp3", name: "Ambikapathy" },
+  { file: "songs/kalyani.mp3", name: "Kalyani" },
+  { file: "songs/sweater-weather.mp3", name: "Sweather weather" },
+  { file: "songs/him-and-I.mp3", name: "Him and I" },
+  { file: "songs/young-and-beautiful.mp3", name: "Young and beautiful" },
+  { file: "songs/eppadi-vandhaayo.mp3", name: "Eppadi Vandhaayo" },
+  { file: "songs/sirikkadhey.mp3", name: "Sirikkadhey" },
+  { file: "songs/let-her-go.mp3", name: "Let her go" },
+  { file: "songs/enakena.mp3", name: "Enakena" },
+  { file: "songs/kurumugil.mp3", name: "Kurumugil" },
+  { file: "songs/neelothi.mp3", name: "Neelothi" },
+  { file: "songs/co2.mp3", name: "CO2" },
+  { file: "songs/oru-kan-jaadai.mp3", name: "Oru kan jaadai" },
+  { file: "songs/pagal-iravai.mp3", name: "Pagal iravai" },
+  { file: "songs/thaensudare.mp3", name: "Thaensudare" },
+  { file: "songs/thuli-thuli.mp3", name: "Thuli Thuli" },
+  { file: "songs/vaadi-pulla-vaadi.mp3", name: "Vaadi pulla vaadi" },
+  { file: "songs/arcade.mp3", name: "Arcade" },
+  { file: "songs/baarishein.mp3", name: "Baarishein" },
+  { file: "songs/oh-my-kadavule.mp3", name: "Oh my kadavule" },
+  { file: "songs/what-a-karvaad.mp3", name: "What a karvaad" },
+  { file: "songs/azhagiye.mp3", name: "Azhagiye" },
+  { file: "songs/katchi-sera.mp3", name: "Katchi" },
+  { file: "songs/shape-of-you.mp3", name: "Shape of you" },
+  { file: "songs/let-me-love-you.mp3", name: "Let me love you" },
+  { file: "songs/puthu-mazha.mp3", name: "Puthu mazha" },
+  { file: "songs/jaalakaarikkar.mp3", name: "Jaalakaarikkar" },
+  { file: "songs/unnai-kaanadhu-naan.mp3", name: "Unnai kaandhu naan" },
+  { file: "songs/i-think-they-call-this-love.mp3", name: "I think they call this love" },
+  { file: "songs/kabira.mp3", name: "Kabira" },
+  { file: "songs/donu-donu.mp3", name: "Donu donu" },
+  { file: "songs/urugi-urugi.mp3", name: "Urugi urugi" },
+  { file: "songs/mine.mp3", name: "Mine" },
+  { file: "songs/vazhithunaiye.mp3", name: "Vazhithunaiye" },
+  { file: "songs/Eenie-Meenie(Lyrics).mp3", name: "Eenie Meenie" },
+  { file: "songs/Blinding-Lights.mp3", name: "Blinding Lights" },
+  { file: "songs/Vizhi-Veekura.mp3", name: "Vizhi Veekura" },
+  { file: "songs/Kaathadi.mp3", name: "Kaathadi" },
+  { file: "songs/Yathe-Yathe.mp3", name: "Yathe Yathe" },
+  { file: "songs/Pogiren.mp3", name: "Pogiren" },
+  { file: "songs/Kathali.mp3", name: "Kathali" },
+  { file: "songs/Thean-Kudika.mp3", name: "Thean Kudika" },
+  { file: "songs/Starboy.mp3", name: "Starboy" },
+  { file: "songs/Die-For-You.mp3", name: "Die for you" },
+  { file: "songs/São-Paulo.mp3", name: "Sao Paulo" },
+  { file: "songs/After-Hours.mp3", name: "After hours" },
+  { file: "songs/Cruel-Summer.mp3", name: "Cruel Summer" },
+  { file: "songs/Blank-Space.mp3", name: "Blank space" },
+  { file: "songs/Style.mp3", name: "Style" },
+  { file: "songs/Lover.mp3", name: "Lover" },
+  { file: "songs/Paper-Rings.mp3", name: "Paper rings" },
+  { file: "songs/Love-Story.mp3", name: "Love story" },
+  { file: "songs/You-Belong-With-Me.mp3", name: "You belong to me" },
+  { file: "songs/Don't-Blame-Me.mp3", name: "Dont blame me" },
+  { file: "songs/Slut!.mp3", name: "Slut" },
+  { file: "songs/Chuttamalle.mp3", name: "Chuttamalle" },
+  { file: "songs/maate-vinadhuga.mp3", name: "Maate vinadhuga" },
+  { file: "songs/anuv-jain-husn.mp3", name: "Anuv jain husn" },
+  { file: "songs/alag-aasman.mp3", name: "alag aasman" },
+  { file: "songs/life-goes-on.mp3", name: "Life goes on" },
+  { file: "songs/DNA.mp3", name: "DNA" },
+  { file: "songs/Fake-love.mp3", name: "Fake love" },
+  { file: "songs/My-universe.mp3", name: "My universe" },
+  { file: "songs/Blood-sweat-and-tears.mp3", name: "Blood, sweat and tears" },
+  { file: "songs/Boy-with-luv.mp3", name: "Boy with luv" },
+  { file: "songs/black-swan.mp3", name: "Black swan" },
+  { file: "songs/0000-by-bts.mp3", name: "00:00" },
+  { file: "songs/inner-child(JK).mp3", name: "inner child" }
+
+];
+
+/* ============================= */
+
+let currentSong = 0;
+const player = document.getElementById("player");
+const playlistDiv = document.getElementById("playlist");
+
+/* Create Now Playing text */
+const nowPlaying = document.createElement("h3");
+nowPlaying.innerText = "Tap a song to start 🎵";
+document.body.insertBefore(nowPlaying, document.querySelector(".controls"));
+
+/* Create playlist */
+songs.forEach((song, index) => {
+  const div = document.createElement("div");
+  div.classList.add("song");
+  div.textContent = song.name;
+  div.onclick = () => loadSong(index);
+  div.id = "song-" + index;
+  playlistDiv.appendChild(div);
+});
+
+function loadSong(index) {
+  currentSong = index;
+  player.src = songs[currentSong].file;
+  player.play();
+  nowPlaying.innerText = "Now Playing: " + songs[currentSong].name;
+  highlightSong();
+}
+
+function playPause() {
+  if (player.paused) {
+    player.play();
+  } else {
+    player.pause();
+  }
+}
+
+function nextSong() {
+  currentSong = (currentSong + 1) % songs.length;
+  loadSong(currentSong);
+}
+
+function prevSong() {
+  currentSong = (currentSong - 1 + songs.length) % songs.length;
+  loadSong(currentSong);
+}
+
+function shuffleSong() {
+  currentSong = Math.floor(Math.random() * songs.length);
+  loadSong(currentSong);
+}
+
+function highlightSong() {
+  document.querySelectorAll(".song").forEach(el => el.classList.remove("active"));
+  document.getElementById("song-" + currentSong).classList.add("active");
+}
+
+player.addEventListener("ended", nextSong);
+
+/* Floating birthday emojis */
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.classList.add("heart");
+  heart.innerHTML = "🥳";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+  document.body.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 6000);
+}
+
+setInterval(createHeart, 600);
+
+</script>
+
+</body>
+</html>
